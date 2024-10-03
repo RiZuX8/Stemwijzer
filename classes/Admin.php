@@ -24,79 +24,147 @@ class Admin
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+        if (curl_errno($ch)) {
+            throw new Exception('Curl error: ' . curl_error($ch));
+        }
+
         curl_close($ch);
 
-        return ['code' => $httpCode, 'body' => json_decode($response, true)];
+        $decodedResponse = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Invalid JSON response from API');
+        }
+
+        return ['code' => $httpCode, 'body' => $decodedResponse];
     }
 
     public function getAll()
     {
-        $response = $this->makeApiRequest('GET');
-        return ($response['code'] == 200) ? $response['body'] : false;
+        try {
+            $response = $this->makeApiRequest('GET');
+            if ($response['code'] == 200) {
+                return $response['body'];
+            } else {
+                throw new Exception('Failed to retrieve admins. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::getAll: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function getById($id)
     {
-        $response = $this->makeApiRequest('GET', "/$id");
-        return ($response['code'] == 200) ? $response['body'] : false;
-    }
-
-    public function add()
-    {
-        $data = [
-            'partyID' => $this->partyID,
-            'email' => $this->email,
-            'password' => $this->password
-        ];
-
-        $response = $this->makeApiRequest('POST', '', $data);
-
-        if ($response['code'] == 201) {
-            $this->adminID = $response['body']['id'];
-            return true;
+        try {
+            $response = $this->makeApiRequest('GET', "/$id");
+            if ($response['code'] == 200) {
+                return $response['body'];
+            } else {
+                throw new Exception('Failed to retrieve admin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::getById: ' . $e->getMessage());
+            return false;
         }
-        return false;
     }
 
-    public function update()
+    public function add($partyID, $email, $password)
     {
-        $data = [
-            'partyID' => $this->partyID,
-            'email' => $this->email
-        ];
+        try {
+            $data = [
+                'partyID' => $partyID,
+                'email' => $email,
+                'password' => $password
+            ];
 
-        $response = $this->makeApiRequest('PUT', "/{$this->adminID}", $data);
-        return ($response['code'] == 200);
+            $response = $this->makeApiRequest('POST', '', $data);
+
+            if ($response['code'] == 201 && isset($response['body']['id'])) {
+                $this->adminID = $response['body']['id'];
+                return true;
+            } else {
+                throw new Exception('Failed to add admin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::add: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function update($adminID, $partyID, $email)
+    {
+        try {
+            $data = [
+                'partyID' => $partyID,
+                'email' => $email
+            ];
+
+            $response = $this->makeApiRequest('PUT', "/$adminID", $data);
+
+            if ($response['code'] == 200) {
+                return true;
+            } else {
+                throw new Exception('Failed to update admin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::update: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id)
     {
-        $response = $this->makeApiRequest('DELETE', "/$id");
-        return ($response['code'] == 204);
+        try {
+            $response = $this->makeApiRequest('DELETE', "/$id");
+            if ($response['code'] == 204) {
+                return true;
+            } else {
+                throw new Exception('Failed to delete admin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::delete: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function updatePassword($id, $newPassword)
     {
-        $data = ['password' => $newPassword];
-        $response = $this->makeApiRequest('PUT', "/$id", $data);
-        return ($response['code'] == 200);
+        try {
+            $data = ['password' => $newPassword];
+            $response = $this->makeApiRequest('PUT', "/$id", $data);
+            if ($response['code'] == 200) {
+                return true;
+            } else {
+                throw new Exception('Failed to update password. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::updatePassword: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function login($email, $password)
     {
-        $data = [
-            'email' => $email,
-            'password' => $password
-        ];
+        try {
+            $data = [
+                'email' => $email,
+                'password' => $password
+            ];
 
-        $response = $this->makeApiRequest('POST', '/login', $data);
+            $response = $this->makeApiRequest('POST', '/login', $data);
 
-        if ($response['code'] == 200) {
-            $this->adminID = $response['body']['admin']['id'];
-            $this->email = $response['body']['admin']['email'];
-            $this->partyID = $response['body']['admin']['partyID'];
-            return true;
+            if ($response['code'] == 200 && isset($response['body']['admin'])) {
+                $this->adminID = $response['body']['admin']['id'];
+                $this->email = $response['body']['admin']['email'];
+                $this->partyID = $response['body']['admin']['partyID'];
+                return true;
+            } else {
+                throw new Exception('Login failed. ' . ($response['body']['message'] ?? 'Unknown error'));
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::login: ' . $e->getMessage());
+            return false;
         }
-        return false;
     }
 }
