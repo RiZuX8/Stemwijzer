@@ -56,7 +56,7 @@ class SuperAdmin
     public function getById($id)
     {
         try {
-            $response = $this->makeApiRequest('GET', "/$id");
+            $response = $this->makeApiRequest('GET', "/id/$id");
             if ($response['code'] == 200) {
                 return $response['body']['data'];
             } else {
@@ -64,6 +64,21 @@ class SuperAdmin
             }
         } catch (Exception $e) {
             error_log('Error in SuperAdmin::getById: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getByEmail($email)
+    {
+        try {
+            $response = $this->makeApiRequest('GET', "/email/$email");
+            if ($response['code'] == 200) {
+                return $response['body']['data'];
+            } else {
+                throw new Exception('Failed to retrieve superadmin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in SuperAdmin::getByEmail: ' . $e->getMessage());
             return false;
         }
     }
