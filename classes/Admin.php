@@ -57,7 +57,7 @@ class Admin
     public function getById($id)
     {
         try {
-            $response = $this->makeApiRequest('GET', "/$id");
+            $response = $this->makeApiRequest('GET', "/id/$id");
             if ($response['code'] == 200) {
                 return $response['body'];
             } else {
@@ -65,6 +65,21 @@ class Admin
             }
         } catch (Exception $e) {
             error_log('Error in Admin::getById: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getByEmail($email)
+    {
+        try {
+            $response = $this->makeApiRequest('GET', "/email/$email");
+            if ($response['code'] == 200) {
+                return $response['body'];
+            } else {
+                throw new Exception('Failed to retrieve admin. HTTP Code: ' . $response['code']);
+            }
+        } catch (Exception $e) {
+            error_log('Error in Admin::getByEmail: ' . $e->getMessage());
             return false;
         }
     }
