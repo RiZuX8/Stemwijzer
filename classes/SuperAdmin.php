@@ -1,7 +1,7 @@
 <?php
 class SuperAdmin
 {
-    private $apiUrl = 'http://stemwijzer-api.test/superadmins';
+    private $apiUrl = 'http://stemwijzer-api.local/superadmins';
 
     public $superAdminID;
     public $email;

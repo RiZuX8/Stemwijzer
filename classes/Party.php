@@ -1,7 +1,7 @@
 <?php
 class Party
 {
-    private $apiUrl = 'http://stemwijzer-api.test/parties';
+    private $apiUrl = 'http://stemwijzer-api.local/parties';
 
     public $partyID;
     public $name;
