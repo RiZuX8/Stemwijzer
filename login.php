@@ -1,53 +1,11 @@
 <?php
 session_start();
-require_once 'classes/Admin.php';
-require_once 'classes/SuperAdmin.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    if (isset($email) AND isset($password)) {
-        $admin = new Admin();
-        // check if admin exists by email
-        if ($admin->getByEmail($email)) {
-            // check if password is correct
-            if ($admin->login($email, $password)) {
-                $_SESSION['admin'] = [
-                    'id' => $admin->adminID,
-                    'partyID' => $admin->partyID,
-                    'email' => $admin->email
-                ];
-                header('Location: /admin.php');
-                exit;
-            } else {
-                $error = 'E-mailadres en/of wachtwoord is onjuist';
-                error_log($error);
-            }
-        } else {
-            // check if superAdmin exists by email
-            $superAdmin = new SuperAdmin();
-            if ($superAdmin->getByEmail($email)) {
-                // check if password is correct
-                if ($superAdmin->login($email, $password)) {
-                    $_SESSION['superAdmin'] = [
-                        'id' => $superAdmin->superAdminID,
-                        'email' => $superAdmin->email
-                    ];
-                    header('Location: /superadmin.php');
-                    exit;
-                } else {
-                    $error = 'E-mailadres en/of wachtwoord is onjuist';
-                    error_log($error);
-                }
-            }
-        }
-    } else {
-        $error = 'Vul alle velden in';
-        error_log($error);
-    }
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: /login.php');
+    exit;
 }
 ?>
-
 <!doctype html>
 <html lang="nl">
 <head>
@@ -59,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <h1>Login</h1>
+    <span class="errorMessage"></span>
     <form method="post">
         <label for="email">E-mailadres:</label>
         <input type="email" name="email" id="email" required>
@@ -70,3 +29,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </body>
 </html>
+
+
+<?php
+require_once 'classes/Admin.php';
+require_once 'classes/SuperAdmin.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    if (!empty($email) AND !empty($password)) {
+        $admin = new Admin();
+        // check if admin exists by email
+        $checkAdmin = $admin->getByEmail($email);
+        if ($checkAdmin['status'] === 200) {
+            // check if password is correct
+            if ($admin->login($email, $password)) {
+                $_SESSION['admin'] = [
+                    'id' => $admin->adminID,
+                    'partyID' => $admin->partyID,
+                    'email' => $admin->email
+                ];
+                error_log('Admin ingelogd');
+                error_log(print_r($_SESSION, true));
+                header('Location: /admin.php');
+            } else {
+                error_log('E-mailadres en/of wachtwoord is onjuist');
+                showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
+            }
+        } else {
+            error_log('Admin bestaat niet');
+            // check if superAdmin exists by email
+            $superAdmin = new SuperAdmin();
+            if ($superAdmin->getByEmail($email)) {
+                // check if password is correct
+                if ($superAdmin->login($email, $password)) {
+                    $_SESSION['superAdmin'] = [
+                        'id' => $superAdmin->superAdminID,
+                        'email' => $superAdmin->email
+                    ];
+                    error_log('SuperAdmin ingelogd');
+                    error_log(print_r($_SESSION, true));
+                    header('Location: /superadmin.php');
+                } else {
+                    error_log('E-mailadres en/of wachtwoord is onjuist');
+                    showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
+                }
+            }
+        }
+    } else {
+        error_log('Vul alle velden in');
+        showErrorMessage('Vul alle velden in');
+    }
+}
+
+function showErrorMessage($message) {
+    echo '<script>document.querySelector(".errorMessage").innerText = "' . $message . '";</script>';
+}
+?>
