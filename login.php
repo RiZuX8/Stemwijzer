@@ -54,8 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($email) AND !empty($password)) {
         $admin = new Admin();
         // check if admin exists by email
-        $checkAdmin = $admin->getByEmail($email);
-        if ($checkAdmin['status'] === 200) {
+        if ($admin->getByEmail($email)) {
             // check if password is correct
             if ($admin->login($email, $password)) {
                 $_SESSION['admin'] = [
