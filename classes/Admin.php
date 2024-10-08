@@ -1,7 +1,7 @@
 <?php
 class Admin
 {
-    private $apiUrl = 'http://stemwijzer-api.test/admins';
+    private $apiUrl = 'http://stemwijzer-api.local/admins';
 
     public $adminID;
     public $partyID;

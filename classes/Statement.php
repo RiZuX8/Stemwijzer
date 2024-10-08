@@ -1,7 +1,7 @@
 <?php
 class Statement
 {
-    private $apiUrl = 'http://stemwijzer-api.test/statements';
+    private $apiUrl = 'http://stemwijzer-api.local/statements';
 
     public $statementID;
     public $name;
