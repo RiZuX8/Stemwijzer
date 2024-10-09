@@ -33,7 +33,7 @@ if (!isset($_SESSION['superAdmin'])) {
 <hr>
 
 <div class="container">
-    <a href="gebruikers.php" class="button">Gebruikers</a>
+    <a href="admins.php" class="button">Admins</a>
     <a href="partijen.php" class="button">Partij</a>
     <a href="stellingen.php" class="button">Stellingen</a>
 </div>
