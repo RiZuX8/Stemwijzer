@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
                 error_log('Admin ingelogd');
                 error_log(print_r($_SESSION, true));
-                header('Location: /admin.php');
+                header('Location: /admin/home.php');
             } else {
                 error_log('E-mailadres en/of wachtwoord is onjuist');
                 showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ];
                     error_log('SuperAdmin ingelogd');
                     error_log(print_r($_SESSION, true));
-                    header('Location: /superadmin.php');
+                    header('Location: /superadmin/home.php');
                 } else {
                     error_log('E-mailadres en/of wachtwoord is onjuist');
                     showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
