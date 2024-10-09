@@ -146,35 +146,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="sidebar">
             <div>
-                <label for="x-as">X-as waarde</label>
+                <label for="x-as">Links & Rechts waarde</label>
                 <select id="x-as" name="x-as">
-                    <option value="-5">-5</option>
-                    <option value="-4">-4</option>
-                    <option value="-3">-3</option>
-                    <option value="-2">-2</option>
-                    <option value="-1">-1</option>
-                    <option value="0" selected>0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="-5">5 punten, Links</option>
+                    <option value="-4">4 punten, Links</option>
+                    <option value="-3">3 punten, Links</option>
+                    <option value="-2">2 punten, Links</option>
+                    <option value="-1">1 punten, Links</option>
+                    <option value="0" selected>0 punten, Geen van beide</option>
+                    <option value="1">1 punten, Rechts</option>
+                    <option value="2">2 punten, Rechts</option>
+                    <option value="3">3 punten, Rechts</option>
+                    <option value="4">4 punten, Rechts</option>
+                    <option value="5">5 punten, Rechts</option>
                 </select>
             </div>
             <div>
-                <label for="y-as">Y-as waarde</label>
+                <label for="y-as">Conservatief & Progressief waarde</label>
                 <select id="y-as" name="y-as">
-                    <option value="-5">-5</option>
-                    <option value="-4">-4</option>
-                    <option value="-3">-3</option>
-                    <option value="-2">-2</option>
-                    <option value="-1">-1</option>
-                    <option value="0" selected>0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="-5">5 punten, Conservatief</option>
+                    <option value="-4">4 punten, Conservatief</option>
+                    <option value="-3">3 punten, Conservatief</option>
+                    <option value="-2">2 punten, Conservatief</option>
+                    <option value="-1">1 punten, Conservatief</option>
+                    <option value="0" selected>0 punten, Geen van beide</option>
+                    <option value="1">1 punten, Progressief</option>
+                    <option value="2">2 punten, Progressief</option>
+                    <option value="3">3 punten, Progressief</option>
+                    <option value="4">4 punten, Progressief</option>
+                    <option value="5">5 punten, Progressief</option>
                 </select>
             </div>
             <div>
