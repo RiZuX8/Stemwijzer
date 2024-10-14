@@ -4,8 +4,16 @@ if (!isset($_SESSION['superAdmin'])) {
     header('Location: ../login.php');
     exit();
 }
-?>
 
+require_once '../classes/Admin.php';
+require_once '../classes/Party.php';
+
+$admin = new Admin();
+$admins = $admin->getAll();
+
+$party = new Party();
+$parties = $party->getAll();
+?>
 <!doctype html>
 <html lang="nl">
 <head>
@@ -33,5 +41,90 @@ if (!isset($_SESSION['superAdmin'])) {
 </header>
 <hr>
 
+<table>
+    <thead>
+    <tr>
+        <th class="number-col">ID</th>
+        <th class="text-area-col">Partij</th>
+        <th class="text-area-col">Email</th>
+        <th class="action-col"></th>
+        <th class="action-col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($admins as $admin) {
+        $partyName = '';
+        foreach ($parties as $party) {
+            if ($party['partyID'] == $admin['partyID']) {
+                $partyName = $party['name'];
+                break;
+            }
+        }
+        echo "<tr>
+            <td class='number-col'><div class='mainNumber'>{$admin['adminID']}</div></td>
+            <td class='text-area-col'>
+                <input type='text' class='mainInfo party-input' value='$partyName' disabled>
+                <div class='party-select-wrapper' style='display:none;'>
+                    <select class='party-select'>
+                        " . implode('', array_map(function($party) use ($admin) {
+                            return "<option value='{$party['partyID']}'" . ($party['partyID'] == $admin['partyID'] ? ' selected' : '') . ">{$party['name']}</option>";
+                        }, $parties)) . "
+                    </select>
+                </div>
+            </td>
+            <td class='text-area-col'><input type='text' class='mainInfo' value='{$admin['email']}' disabled></td>
+            <td class='action-col'><button class='edit-btn'>Aanpassen</button></td>
+            <td class='action-col'><button class='remove-btn'>Verwijderen</button></td>
+            </tr>";
+    }
+    ?>
+    </tbody>
+</table>
+
+<script>
+    function handleButtonClick(event) {
+        const button = event.target;
+        const row = button.closest('tr');
+        const inputFields = row.querySelectorAll('.mainInfo');
+        const partyInput = row.querySelector('.party-input');
+        const partySelectWrapper = row.querySelector('.party-select-wrapper');
+
+        if (button.classList.contains('edit-btn')) {
+            // Change to Save state
+            button.textContent = 'Opslaan';
+            button.classList.remove('edit-btn');
+            button.classList.add('save-btn');
+            inputFields.forEach(input => {
+                if (input !== partyInput) {
+                    input.disabled = false;
+                }
+            });
+            partyInput.style.display = 'none';
+            partySelectWrapper.style.display = 'inline-block';
+        } else if (button.classList.contains('save-btn')) {
+            // Change back to Edit state
+            button.textContent = 'Aanpassen';
+            button.classList.remove('save-btn');
+            button.classList.add('edit-btn');
+            inputFields.forEach(input => input.disabled = true);
+            const partySelect = partySelectWrapper.querySelector('.party-select');
+            partyInput.value = partySelect.options[partySelect.selectedIndex].text;
+            partyInput.style.display = 'inline-block';
+            partySelectWrapper.style.display = 'none';
+
+            //updateAdminData(row.querySelector('.mainNumber').textContent, partySelect.value, row.querySelector('input[type="text"]:nth-child(2)').value);
+        }
+    }
+
+    function updateAdminData(adminId, partyId, email) {
+        // Send request to update the data
+    }
+
+    const buttons = document.querySelectorAll('.edit-btn, .save-btn');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', handleButtonClick);
+    });
+</script>
 </body>
 </html>
