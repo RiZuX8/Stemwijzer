@@ -81,16 +81,16 @@ $parties = $party->getAll();
     </tbody>
 </table>
 
+<script src="../js/api.js"></script>
 <script>
-    function handleButtonClick(event) {
-        const button = event.target;
+document.addEventListener('DOMContentLoaded', () => {
+    function changeButtonState(button, isEditing) {
         const row = button.closest('tr');
         const inputFields = row.querySelectorAll('.mainInfo');
         const partyInput = row.querySelector('.party-input');
         const partySelectWrapper = row.querySelector('.party-select-wrapper');
 
-        if (button.classList.contains('edit-btn')) {
-            // Change to Save state
+        if (isEditing) {
             button.textContent = 'Opslaan';
             button.classList.remove('edit-btn');
             button.classList.add('save-btn');
@@ -101,29 +101,90 @@ $parties = $party->getAll();
             });
             partyInput.style.display = 'none';
             partySelectWrapper.style.display = 'inline-block';
-        } else if (button.classList.contains('save-btn')) {
-            // Change back to Edit state
+        } else {
             button.textContent = 'Aanpassen';
             button.classList.remove('save-btn');
             button.classList.add('edit-btn');
             inputFields.forEach(input => input.disabled = true);
             const partySelect = partySelectWrapper.querySelector('.party-select');
-            partyInput.value = partySelect.options[partySelect.selectedIndex].text;
+            if (partySelect) {
+                partyInput.value = partySelect.options[partySelect.selectedIndex].text;
+            } else {
+                console.error('Party select element not found');
+            }
             partyInput.style.display = 'inline-block';
             partySelectWrapper.style.display = 'none';
-
-            //updateAdminData(row.querySelector('.mainNumber').textContent, partySelect.value, row.querySelector('input[type="text"]:nth-child(2)').value);
         }
     }
 
-    function updateAdminData(adminId, partyId, email) {
-        // Send request to update the data
+    function handleButtonClick(event) {
+        const button = event.target;
+        const row = button.closest('tr');
+
+        if (button.classList.contains('edit-btn')) {
+            changeButtonState(button, true);
+        } else if (button.classList.contains('save-btn')) {
+            const adminId = row.querySelector('.mainNumber')?.textContent;
+            const partySelect = row.querySelector('.party-select');
+            const emailInput = row.querySelector('input.mainInfo:not(.party-input)');
+
+            console.log('Debug: Elements found', { adminId, partySelect, emailInput });
+
+            if (!adminId || !partySelect || !emailInput) {
+                console.error('Required elements not found', { adminId, partySelect, emailInput });
+                alert('Er is een fout opgetreden. Controleer de console voor meer informatie.');
+                return;
+            }
+
+            const newPartyId = partySelect.value;
+            const newEmail = emailInput.value;
+
+            // Get original values
+            const originalPartyId = partySelect.querySelector('option[selected]')?.value;
+            const originalEmail = emailInput.defaultValue;
+
+            console.log('Debug: Values', {
+                original: { partyId: originalPartyId, email: originalEmail },
+                new: { partyId: newPartyId, email: newEmail }
+            });
+
+            // Check if values have changed
+            if (newPartyId === originalPartyId && newEmail === originalEmail) {
+                console.log('No changes detected');
+                changeButtonState(button, false);
+                return;
+            }
+
+            if (!newPartyId || !newEmail) {
+                alert('Vul alle velden in.');
+                return;
+            }
+            if (!newEmail.includes('@') || !newEmail.includes('.')) {
+                alert('Vul een geldig emailadres in.');
+                return;
+            }
+
+            updateAdminData(adminId, newPartyId, newEmail)
+            .then(data => {
+                console.log('Success:', data);
+                changeButtonState(button, false);
+                // Update the original values to reflect the changes
+                emailInput.defaultValue = newEmail;
+                partySelect.querySelector('option[selected]')?.removeAttribute('selected');
+                partySelect.querySelector(`option[value="${newPartyId}"]`)?.setAttribute('selected', '');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Er is een fout opgetreden bij het bijwerken van de gegevens. Probeer het opnieuw.');
+            });
+        }
     }
 
     const buttons = document.querySelectorAll('.edit-btn, .save-btn');
 
     buttons.forEach(button => {
         button.addEventListener('click', handleButtonClick);
+    });
     });
 </script>
 </body>
