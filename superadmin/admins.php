@@ -60,7 +60,7 @@ $parties = $party->getAll();
                 break;
             }
         }
-        echo "<tr>
+        echo "<tr data-admin-id='{$admin['adminID']}'>
             <td class='number-col'><div class='mainNumber'>{$admin['adminID']}</div></td>
             <td class='text-area-col'>
                 <input type='text' class='mainInfo party-input' value='$partyName' disabled>
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (button.classList.contains('edit-btn')) {
             changeButtonState(button, true);
         } else if (button.classList.contains('save-btn')) {
-            const adminId = row.querySelector('.mainNumber')?.textContent;
+            const adminId = row.dataset.adminId;
             const partySelect = row.querySelector('.party-select');
             const emailInput = row.querySelector('input.mainInfo:not(.party-input)');
 
@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalEmail = emailInput.defaultValue;
 
             console.log('Debug: Values', {
-                original: { partyId: originalPartyId, email: originalEmail },
-                new: { partyId: newPartyId, email: newEmail }
+                original: { PartyId: originalPartyId, email: originalEmail },
+                new: { PartyId: newPartyId, email: newEmail }
             });
 
             // Check if values have changed
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            updateAdminData(adminId, newPartyId, newEmail)
+            updateAdmin(adminId, newPartyId, newEmail)
             .then(data => {
                 console.log('Success:', data);
                 changeButtonState(button, false);
@@ -177,15 +177,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error:', error);
                 alert('Er is een fout opgetreden bij het bijwerken van de gegevens. Probeer het opnieuw.');
             });
+        } else if (button.classList.contains('remove-btn')) {
+            const adminId = row.dataset.adminId;
+            console.log('Debug: Admin ID', adminId);
+            if (confirm(`Weet je zeker dat je de admin met ID ${adminId} wilt verwijderen?`)) {
+                deleteAdmin(adminId)
+                    .then(data => {
+                        console.log('Success:', data);
+                        row.remove(); // Remove the row from the table
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Er is een fout opgetreden bij het verwijderen van de admin. Probeer het opnieuw.');
+                    });
+            }
         }
     }
 
-    const buttons = document.querySelectorAll('.edit-btn, .save-btn');
+    const buttons = document.querySelectorAll('.edit-btn, .save-btn, .remove-btn');
 
     buttons.forEach(button => {
         button.addEventListener('click', handleButtonClick);
     });
-    });
+});
 </script>
 </body>
 </html>

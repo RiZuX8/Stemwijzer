@@ -1,5 +1,5 @@
-function updateAdminData(adminId, partyID, email) {
-    return fetch(`http://stemwijzer-api.local/admins/${adminId}`, {
+function updateAdmin(adminID, partyID, email) {
+    return fetch(`http://stemwijzer-api.local/admins/${adminID}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -8,6 +8,18 @@ function updateAdminData(adminId, partyID, email) {
             partyID: partyID,
             email: email
         })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    });
+}
+
+function deleteAdmin(adminID) {
+    return fetch(`http://stemwijzer-api.local/admins/${adminID}`, {
+        method: 'DELETE'
     })
     .then(response => {
         if (!response.ok) {
