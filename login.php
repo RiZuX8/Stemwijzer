@@ -51,8 +51,9 @@ require_once 'classes/SuperAdmin.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $admin = new Admin();
+    $superAdmin = new SuperAdmin();
     if (!empty($email) AND !empty($password)) {
-        $admin = new Admin();
         // check if admin exists by email
         if ($admin->getByEmail($email)) {
             // check if password is correct
@@ -69,25 +70,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log('E-mailadres en/of wachtwoord is onjuist');
                 showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
             }
-        } else {
-            error_log('Admin bestaat niet');
+        } else if ($superAdmin->getByEmail($email)) {
             // check if superAdmin exists by email
-            $superAdmin = new SuperAdmin();
-            if ($superAdmin->getByEmail($email)) {
-                // check if password is correct
-                if ($superAdmin->login($email, $password)) {
-                    $_SESSION['superAdmin'] = [
-                        'id' => $superAdmin->superAdminID,
-                        'email' => $superAdmin->email
-                    ];
-                    error_log('SuperAdmin ingelogd');
-                    error_log(print_r($_SESSION, true));
-                    header('Location: /superadmin/home.php');
-                } else {
-                    error_log('E-mailadres en/of wachtwoord is onjuist');
-                    showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
-                }
+            // check if password is correct
+            if ($superAdmin->login($email, $password)) {
+                $_SESSION['superAdmin'] = [
+                    'id' => $superAdmin->superAdminID,
+                    'email' => $superAdmin->email
+                ];
+                error_log('SuperAdmin ingelogd');
+                error_log(print_r($_SESSION, true));
+                header('Location: /superadmin/home.php');
+            } else {
+                error_log('E-mailadres en/of wachtwoord is onjuist');
+                showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
             }
+        } else {
+            error_log('Admin of SuperAdmin bestaat niet');
+            showErrorMessage('E-mailadres en/of wachtwoord is onjuist');
         }
     } else {
         error_log('Vul alle velden in');
