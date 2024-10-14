@@ -43,7 +43,7 @@ class SuperAdmin
         try {
             $response = $this->makeApiRequest('GET');
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve superadmins. HTTP Code: ' . $response['code']);
             }
@@ -58,7 +58,7 @@ class SuperAdmin
         try {
             $response = $this->makeApiRequest('GET', "/id/$id");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve superadmin. HTTP Code: ' . $response['code']);
             }
@@ -73,7 +73,7 @@ class SuperAdmin
         try {
             $response = $this->makeApiRequest('GET', "/email/$email");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve superadmin. HTTP Code: ' . $response['code']);
             }

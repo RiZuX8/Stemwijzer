@@ -46,7 +46,7 @@ class Statement
         try {
             $response = $this->makeApiRequest('GET');
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve statements. HTTP Code: ' . $response['code']);
             }
@@ -61,7 +61,7 @@ class Statement
         try {
             $response = $this->makeApiRequest('GET', "/$id");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve statement. HTTP Code: ' . $response['code']);
             }

@@ -44,7 +44,7 @@ class Party
         try {
             $response = $this->makeApiRequest('GET');
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve parties. HTTP Code: ' . $response['code']);
             }
@@ -59,7 +59,7 @@ class Party
         try {
             $response = $this->makeApiRequest('GET', "/$id");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve party. HTTP Code: ' . $response['code']);
             }

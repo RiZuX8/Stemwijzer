@@ -43,7 +43,7 @@ class PartyStatement
         try {
             $response = $this->makeApiRequest('GET');
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve party statements. HTTP Code: ' . $response['code']);
             }
@@ -58,7 +58,7 @@ class PartyStatement
         try {
             $response = $this->makeApiRequest('GET', "/party/$partyID");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve party statements. HTTP Code: ' . $response['code']);
             }
@@ -73,7 +73,7 @@ class PartyStatement
         try {
             $response = $this->makeApiRequest('GET', "/statement/$statementID");
             if ($response['code'] == 200) {
-                return $response['body']['data'];
+                return $response['body'];
             } else {
                 throw new Exception('Failed to retrieve party statements. HTTP Code: ' . $response['code']);
             }
