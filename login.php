@@ -5,6 +5,14 @@ if (isset($_GET['logout'])) {
     header('Location: /login.php');
     exit;
 }
+if (isset($_SESSION['admin'])) {
+    header('Location: /admin/home.php');
+    exit();
+}
+if (isset($_SESSION['superAdmin'])) {
+    header('Location: /superadmin/home.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="nl">
