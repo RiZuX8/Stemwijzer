@@ -124,38 +124,38 @@ document.addEventListener('DOMContentLoaded', () => {
         if (button.classList.contains('edit-btn')) {
             changeButtonState(button, true);
         } else if (button.classList.contains('save-btn')) {
-            const adminId = row.dataset.adminId;
+            const adminID = row.dataset.adminID;
             const partySelect = row.querySelector('.party-select');
             const emailInput = row.querySelector('input.mainInfo:not(.party-input)');
 
-            console.log('Debug: Elements found', { adminId, partySelect, emailInput });
+            console.log('Debug: Elements found', { adminID, partySelect, emailInput });
 
-            if (!adminId || !partySelect || !emailInput) {
-                console.error('Required elements not found', { adminId, partySelect, emailInput });
+            if (!adminID || !partySelect || !emailInput) {
+                console.error('Required elements not found', { adminID, partySelect, emailInput });
                 alert('Er is een fout opgetreden. Controleer de console voor meer informatie.');
                 return;
             }
 
-            const newPartyId = partySelect.value;
+            const newPartyID = partySelect.value;
             const newEmail = emailInput.value;
 
             // Get original values
-            const originalPartyId = partySelect.querySelector('option[selected]')?.value;
+            const originalPartyID = partySelect.querySelector('option[selected]')?.value;
             const originalEmail = emailInput.defaultValue;
 
             console.log('Debug: Values', {
-                original: { PartyId: originalPartyId, email: originalEmail },
-                new: { PartyId: newPartyId, email: newEmail }
+                original: { PartyID: originalPartyID, email: originalEmail },
+                new: { PartyID: newPartyID, email: newEmail }
             });
 
             // Check if values have changed
-            if (newPartyId === originalPartyId && newEmail === originalEmail) {
+            if (newPartyID === originalPartyID && newEmail === originalEmail) {
                 console.log('No changes detected');
                 changeButtonState(button, false);
                 return;
             }
 
-            if (!newPartyId || !newEmail) {
+            if (!newPartyID || !newEmail) {
                 alert('Vul alle velden in.');
                 return;
             }
@@ -164,24 +164,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            updateAdmin(adminId, newPartyId, newEmail)
+            updateAdmin(adminID, newPartyID, newEmail)
             .then(data => {
                 console.log('Success:', data);
                 changeButtonState(button, false);
                 // Update the original values to reflect the changes
                 emailInput.defaultValue = newEmail;
                 partySelect.querySelector('option[selected]')?.removeAttribute('selected');
-                partySelect.querySelector(`option[value="${newPartyId}"]`)?.setAttribute('selected', '');
+                partySelect.querySelector(`option[value="${newPartyID}"]`)?.setAttribute('selected', '');
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Er is een fout opgetreden bij het bijwerken van de gegevens. Probeer het opnieuw.');
             });
         } else if (button.classList.contains('remove-btn')) {
-            const adminId = row.dataset.adminId;
-            console.log('Debug: Admin ID', adminId);
-            if (confirm(`Weet je zeker dat je de admin met ID ${adminId} wilt verwijderen?`)) {
-                deleteAdmin(adminId)
+            const adminID = row.dataset.adminID;
+            console.log('Debug: Admin ID', adminID);
+            if (confirm(`Weet je zeker dat je de admin met ID ${adminID} wilt verwijderen?`)) {
+                deleteAdmin(adminID)
                     .then(data => {
                         console.log('Success:', data);
                         row.remove(); // Remove the row from the table
