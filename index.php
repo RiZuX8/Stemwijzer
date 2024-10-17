@@ -30,7 +30,7 @@
                 <li class="party-logo">CDA</li>
             </ul>
             <div class="ButtonGroup">
-                <button class="start-button" aria-description="Begin de Politieke Stemwijzer">Start</button>
+                <a href="stellingen.php" class="start-button" aria-description="Begin de Politieke Stemwijzer">Start</a>
             </div>
             <p class="disclaimer" role="note">Let op: het volgende resultaat is slechts een indicatie, het beperkt uw stemvrijheid niet</p>
         </section>
