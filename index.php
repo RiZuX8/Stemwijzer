@@ -1,40 +1,142 @@
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/start.css">
     <title>Politieke Stemwijzer</title>
 </head>
-
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <main id="main-content" class="container">
-        <header class="logo-container">
-            <h1 class="stemwijzer-logo_text">
-                <span>Politieke</span> <span>Stemwijzer</span>
-            </h1>
-            <svg class="logo_svg__logo" width="34" height="34" viewBox="0 0 84 81" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <title>Stemwijzer Icon</title>
-                <path d="M45.8151 37.1399C46.7697 37.1399 47.5507 36.384 47.5507 35.4602V22.0222C47.5507 21.0983 46.7697 20.3424 45.8151 20.3424H23.2513C22.2967 20.3424 21.5156 21.0983 21.5156 22.0222V35.4602C21.5156 36.384 22.2967 37.1399 23.2513 37.1399H45.8151ZM24.987 23.7019L44.0794 23.6683L44.01 33.7804H24.987V23.7019Z" fill="#0A2750" />
-                <path d="M72.8222 51.317C72.3535 50.8635 71.694 50.5779 70.965 50.5779H57.9648V13.5898C57.9648 11.7421 56.42 10.2639 54.5282 10.2639H13.7051C12.2645 10.2639 11.1016 11.3893 11.1016 12.7835V68.2153C11.1016 69.6095 12.2645 70.735 13.7051 70.735H26.7226C27.6773 70.735 28.4583 69.9959 28.4583 69.072C28.4583 68.1313 27.6773 67.3755 26.7226 67.3755H14.5729V13.6234H54.4934V50.5947H37.3797C36.8763 50.6115 36.373 50.7627 35.9564 51.0315L22.4008 59.5982C21.7065 60.0517 21.6371 60.9924 22.2099 61.5467C22.262 61.5971 22.3314 61.6643 22.4008 61.6979L35.9391 70.315C36.3904 70.6006 36.9111 70.7517 37.4491 70.7517H70.9824C72.423 70.7517 73.5859 69.6263 73.5859 68.2321V53.1312C73.5859 52.4257 73.2908 51.8042 72.8222 51.3338V51.317ZM37.1367 67.3755L30.194 62.9913V58.2712L37.1367 53.9374V67.3755ZM70.1145 67.3755H40.608V62.3362H70.1145V67.3755ZM70.1145 58.9767H40.608V53.9374H70.1145V58.9767Z" fill="#0A2750" />
-            </svg>
-        </header>
-        <section class="content" aria-labelledby="participating-parties">
-            <h2 id="participating-parties">Deze partijen doen mee:</h2>
-            <ul class="party-grid">
-                <li class="party-logo">D66</li>
-                <li class="party-logo">VVD</li>
-                <li class="party-logo">PvdA</li>
-                <li class="party-logo">CDA</li>
-            </ul>
-            <div class="ButtonGroup">
-                <a href="stellingen.php" class="start-button" aria-description="Begin de Politieke Stemwijzer">Start</a>
-            </div>
-            <p class="disclaimer" role="note">Let op: het volgende resultaat is slechts een indicatie, het beperkt uw stemvrijheid niet</p>
-        </section>
-    </main>
-</body>
+<div class="main-container">
+    <header>
+        <h1 class="stemwijzer-logo">
+            <span>Politieke</span> <span>Stemwijzer</span>
+        </h1>
+        <img src="./assets/vote.svg" alt="participate checklist" />
+    </header>
 
+    <section class="content" aria-labelledby="participating-parties">
+        <h2 id="participating-parties">Deze partijen doen mee:</h2>
+        <ul id="party-grid" class="party-grid">
+            <!-- Parties will be loaded here -->
+        </ul>
+        <div class="ButtonGroup">
+            <a href="stellingen.php" class="start-button" aria-description="Begin de Politieke Stemwijzer">Start</a>
+        </div>
+        <p class="disclaimer" role="note">Let op: het volgende resultaat is slechts een indicatie, het beperkt uw stemvrijheid niet</p>
+    </section>
+</div>
+
+<!-- Modal for party info -->
+<div class="modal-overlay" id="partyModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+            <img class="modal-party-logo" id="modalPartyLogo" alt="Party logo">
+            <h2 class="modal-party-name" id="modalPartyName"></h2>
+        </div>
+        <div class="modal-content">
+            <p class="modal-description" id="modalPartyDescription"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiURL = "http://stemwijzer-api.local";
+    const modal = document.getElementById('partyModal');
+
+    function showErrorMessage(message) {
+        const errorDiv = document.createElement('li');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        document.getElementById('party-grid').appendChild(errorDiv);
+    }
+
+    function createPartyElement(party) {
+        const li = document.createElement('li');
+        li.className = 'party-logo';
+        li.setAttribute('data-party-id', party.partyID);
+        li.onclick = () => showPartyInfo(party);
+
+        if (party.image) {
+            const img = document.createElement('img');
+            img.src = party.image;
+            img.alt = `${party.name} logo`;
+
+            // Error handling
+            img.onerror = () => {
+                li.textContent = party.name;
+            };
+
+            li.appendChild(img);
+        } else {
+            li.textContent = party.name;
+        }
+
+        return li;
+    }
+
+    function showPartyInfo(party) {
+        document.getElementById('modalPartyLogo').src = party.image;
+        document.getElementById('modalPartyName').textContent = party.name;
+        document.getElementById('modalPartyDescription').textContent = party.description;
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    async function loadParties() {
+        const partyGrid = document.getElementById('party-grid');
+
+        try {
+            // Loading indicator
+            const loadingLi = document.createElement('li');
+            loadingLi.className = 'loading';
+            loadingLi.textContent = 'Partijen laden...';
+            partyGrid.appendChild(loadingLi);
+
+            const response = await fetch(`${apiURL}/parties`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const parties = await response.json();
+            partyGrid.innerHTML = '';
+
+            if (Array.isArray(parties)) {
+                parties.forEach(party => {
+                    const partyElement = createPartyElement(party);
+                    partyGrid.appendChild(partyElement);
+                });
+            } else {
+                throw new Error('Invalid data format received from API');
+            }
+
+        } catch (error) {
+            console.error('Error loading parties:', error);
+            partyGrid.innerHTML = '';
+            showErrorMessage('Er kunnen momenteel geen partijen worden geladen.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadParties);
+</script>
+</body>
 </html>

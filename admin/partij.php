@@ -4,17 +4,35 @@ if (!isset($_SESSION['admin'])) {
     header('Location: ../login.php');
     exit();
 }
+
+require_once '../classes/Party.php';
+
+$party = new Party();
+$partyID = $_SESSION['admin']['partyID'] ?? null;
+
+if (!$partyID) {
+    header('Location: home.php');
+    exit();
+}
+
+$partyData = $party->getById($partyID);
+if (!$partyData) {
+    header('Location: home.php');
+    exit();
+}
+
+$imageName = basename(parse_url($partyData['image'], PHP_URL_PATH));
 ?>
 
 <!doctype html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Partij beheer</title>
     <link rel="stylesheet" href="../styles/algemeen.css">
+    <link rel="stylesheet" href="../styles/admin_party_edit.css">
 </head>
 <body>
 <header>
@@ -22,15 +40,121 @@ if (!isset($_SESSION['admin'])) {
         <h1 class="stemwijzer-logo_text">
             <span>Politieke</span> <span>Stemwijzer</span>
         </h1>
-        <svg class="logo_svg__logo" width="34" height="34" viewBox="0 0 84 81" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <title>Stemwijzer Icon</title>
-            <path d="M45.8151 37.1399C46.7697 37.1399 47.5507 36.384 47.5507 35.4602V22.0222C47.5507 21.0983 46.7697 20.3424 45.8151 20.3424H23.2513C22.2967 20.3424 21.5156 21.0983 21.5156 22.0222V35.4602C21.5156 36.384 22.2967 37.1399 23.2513 37.1399H45.8151ZM24.987 23.7019L44.0794 23.6683L44.01 33.7804H24.987V23.7019Z" fill="#0A2750" />
-            <path d="M72.8222 51.317C72.3535 50.8635 71.694 50.5779 70.965 50.5779H57.9648V13.5898C57.9648 11.7421 56.42 10.2639 54.5282 10.2639H13.7051C12.2645 10.2639 11.1016 11.3893 11.1016 12.7835V68.2153C11.1016 69.6095 12.2645 70.735 13.7051 70.735H26.7226C27.6773 70.735 28.4583 69.9959 28.4583 69.072C28.4583 68.1313 27.6773 67.3755 26.7226 67.3755H14.5729V13.6234H54.4934V50.5947H37.3797C36.8763 50.6115 36.373 50.7627 35.9564 51.0315L22.4008 59.5982C21.7065 60.0517 21.6371 60.9924 22.2099 61.5467C22.262 61.5971 22.3314 61.6643 22.4008 61.6979L35.9391 70.315C36.3904 70.6006 36.9111 70.7517 37.4491 70.7517H70.9824C72.423 70.7517 73.5859 69.6263 73.5859 68.2321V53.1312C73.5859 52.4257 73.2908 51.8042 72.8222 51.3338V51.317ZM37.1367 67.3755L30.194 62.9913V58.2712L37.1367 53.9374V67.3755ZM70.1145 67.3755H40.608V62.3362H70.1145V67.3755ZM70.1145 58.9767H40.608V53.9374H70.1145V58.9767Z" fill="#0A2750" />
-        </svg>
+        <img src="../assets/vote.svg" alt="participate checklist" />
     </div>
     <a class="logout-button" href="home.php">Terug</a>
 </header>
 <hr>
 
+<div class="container">
+    <h2 class="title">Partij aanpassen</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="edit-content">
+            <div class="image-upload-section">
+                <label for="file-upload" class="image-container">
+                    <img id="image-preview"
+                         src="<?php echo $partyData['image']; ?>"
+                         alt="Partij logo"
+                         style="display: <?php echo $partyData['image'] ? 'block' : 'none'; ?>; width: 100%; height: 100%; object-fit: cover;">
+                    <div class="image-placeholder" style="display: <?php echo $partyData['image'] ? 'none' : 'block'; ?>">
+                        Afbeelding toevoegen
+                    </div>
+                    <button type="button" class="add-image-button">+</button>
+                </label>
+                <input type="hidden" name="partyID" value="<?php echo $partyID; ?>">
+                <input type="file" id="file-upload" name="image" accept="image/*">
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="name">Partij naam</label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           class="form-input"
+                           value="<?php echo $partyData['name']; ?>"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Beschrijving</label>
+                    <textarea id="description"
+                              name="description"
+                              class="form-input"
+                              required><?php echo $partyData['description']; ?></textarea>
+                </div>
+
+                <button type="submit" class="submit-button">Opslaan</button>
+                <p class="error-message"></p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+    const form = document.querySelector('form');
+    const errorMessage = document.querySelector('.error-message');
+    const fileUpload = document.querySelector('#file-upload');
+    const imagePreview = document.querySelector('#image-preview');
+    const uploadPlaceholder = document.querySelector('.image-placeholder');
+    const addImageButton = document.querySelector('.add-image-button');
+
+    addImageButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        fileUpload.click();
+    });
+
+    fileUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const partyID = document.querySelector('input[name="partyID"]').value;
+        const name = document.querySelector('#name').value;
+        const description = document.querySelector('#description').value;
+        const file = fileUpload.files[0];
+        const currentImage = '<?php echo $imageName; ?>';
+
+        if (name === '') {
+            errorMessage.textContent = 'Vul een naam in.';
+            return;
+        }
+        if (description === '') {
+            errorMessage.textContent = 'Vul een beschrijving in.';
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        if (file) {
+            formData.append('image', file);
+        } else {
+            formData.append('image', currentImage);
+        }
+
+        try {
+            const response = await updatePartyWithImage(partyID, formData);
+            errorMessage.textContent = 'Partij succesvol bijgewerkt.';
+            errorMessage.style.color = '#28a745';
+            setTimeout(() => window.location.href = 'home.php', 1000);
+        } catch (error) {
+            errorMessage.textContent = error.message;
+        }
+    });
+</script>
 </body>
 </html>

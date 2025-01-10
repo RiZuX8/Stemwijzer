@@ -1,73 +1,202 @@
-.container {
-    width: 80%;
-    margin: 2em auto;
-    display: flex;
-}
-.stelling-beheer {
-    width: 25%;
-    padding-right: 2em;
-    margin-top: 1em;
-    margin-left: -5em;
-}
-.stelling-beheer h2 {
-    margin-bottom: 3em;
-    margin-top: -1rem;
-}
-.stelling-beheer textarea {
-    width: 100%;
-    height: 300px;
-    background-color: #D9D9D9;
-    border: none;
-    padding: 1em;
+/* Container Layout */
+
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative; /* Added for better positioning */
+
+}
+
+/* Left Panel - Statement Management */
+.stelling-beheer {
+    width: 25%;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-left: 0; /* Removed negative margin */
+    position: relative; /* For proper stacking */
+}
+
+.stelling-beheer h2 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.uitleg-stellingen {
+    background-color: white !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    line-height: 1.6 !important;
+    font-size: 0.95rem !important;
+    color: #495057;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    height: 250px !important;
+    width: 100% !important; /* Ensure full width within parent */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+
+/* Main Content Area */
 .main-content {
-    width: 30%;
-    margin-top: 3em;
-    margin-left: 8em;
+    width: 40%;
+    padding: 1.5rem;
+    margin-left: 0; /* Remove margin */
+
 }
+
+/* Sidebar */
 .sidebar {
-    width: 15%;
-    padding-right: 2em;
+    width: 25%;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
     margin-left: auto;
-    margin-right: 3em;
-    margin-top: 3em;
 }
+
+/* Form Elements */
 label {
     display: block;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
-input[type="text"], textarea, select {
+
+input[type="text"],
+textarea,
+select {
     width: 100%;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: white;
+    color: #2c3e50;
 }
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #5315f6;
+    box-shadow: 0 0 0 3px rgba(83, 21, 246, 0.1);
+}
+
 textarea {
-    height: 100px;
+    resize: none;
+    height: 150px;
+    line-height: 1.5;
 }
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    accent-color: #5315f6;
+}
+
+/* Select Styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+
+/* Button Styling */
 button {
-    margin-left: auto;
-    margin-right: auto;
     background-color: #5315f6;
     color: white;
     border: none;
-    padding: 15px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 10px;
-    width: 50%;
-    height: 15%;
-    margin-top: 10px;
+    border-radius: 8px;
+    width: auto;
+    min-width: 200px;
+    height: auto;
+    margin: 2rem auto;
     display: block;
     text-align: center;
-    line-height: 10%;
-    transition: background-color 0.3s ease, outline 0.3s ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(83, 21, 246, 0.2);
 }
+
 button:hover {
-    outline: 1px dashed #000000;
-    outline-offset: 2px;
-    background-color: #3a0fb0;
+    background-color: #4010c0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(83, 21, 246, 0.3);
 }
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(83, 21, 246, 0.2);
+}
+
+/* Error Message */
+.errorMessage {
+    color: #dc3545;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background-color: rgba(220, 53, 69, 0.1);
+    display: none;
+}
+
+.errorMessage:not(:empty) {
+    display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        width: 100%;
+        flex-direction: column;
+        padding: 1rem;
+
+    }
+    .stelling-beheer {
+        width: 100%;
+        margin: 0;
+        padding: 1rem;
+    }
+
+    .main-content,
+    .sidebar {
+        width: 100%;
+        margin: 0;
+        padding: 1rem;
+    }
+
+    .uitleg-stellingen {
+        height: auto !important;
+        min-height: 150px;
+    }
+    input[type="text"], textarea, select {
+width: 100%;
+}    }

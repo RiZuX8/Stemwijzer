@@ -1,0 +1,240 @@
+/* Container Layout */
+
+* {
+    box-sizing: border-box;
+}
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.title {
+    font-size: 1.75rem;
+    margin-bottom: 2.5rem;
+    color: #2d3748;
+    text-align: center;
+    font-weight: 600;
+}
+
+.edit-content {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Image Upload Section */
+.image-upload-section {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.image-container {
+    width: 300px;
+    height: 300px;
+    border: 2px dashed #5315f6;
+    border-radius: 12px;
+    position: relative;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.image-container:hover {
+    border-color: #4010c0;
+    background-color: #f0f5ff;
+}
+
+.image-placeholder {
+    color: #64748b;
+    text-align: center;
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+.add-image-button {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: #5315f6;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(83, 21, 246, 0.3);
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.add-image-button:hover {
+    transform: scale(1.1);
+    background: #4010c0;
+}
+
+/* Form Section */
+.form-section {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.form-group {
+    margin-bottom: 1.75rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #4a5568;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.form-input:focus {
+    border-color: #5315f6;
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(83, 21, 246, 0.1);
+}
+
+textarea.form-input {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Submit Button */
+.submit-button {
+    background: #5315f6;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.submit-button:hover {
+    background: #4010c0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(83, 21, 246, 0.2);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* File Upload */
+#file-upload {
+    display: none;
+}
+
+/* Error Message */
+.error-message {
+    color: #e53e3e;
+    background-color: rgba(229, 62, 62, 0.1);
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+}
+
+.error-message:not(:empty) {
+    display: block;
+}
+
+/* Success Message Styles */
+.error-message.success {
+    color: #2f855a;
+    background-color: rgba(47, 133, 90, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .edit-content {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 1.5rem;
+    }
+
+    .image-upload-section,
+    .image-container {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+    }
+
+    .form-section {
+        width: 100%;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-input {
+        padding: 0.75rem;
+    }
+
+    .submit-button {
+        padding: 0.875rem;
+    }
+}
+
+/* Image Preview Enhancements */
+#image-preview {
+    object-fit: contain;
+    background-color: white;
+    transition: opacity 0.2s ease;
+}
+
+.image-container:hover #image-preview {
+    opacity: 0.9;
+}
+
+/* Loading State */
+.submit-button.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Additional Helper Classes */
+.text-muted {
+    color: #718096;
+    font-size: 0.875rem;
+}

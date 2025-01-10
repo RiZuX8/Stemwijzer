@@ -1,145 +1,240 @@
+/* Main layout */
+body {
+    background-color: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Table styling */
 table {
-    width: 60%;
-    border-collapse: collapse;
-
-}
-
-th, td {
-    padding: 8px;
-
-}
-th{
-    font-weight: bold;
-    font-size: 20px;
-    text-align: left;
-}
-td {
-    border-bottom: #d6d6d6 3px solid;
-}
-.number-col {
-    width: 5%;
-}
-.text-area-col {
-    width: 30%;
-}
-.action-col {
-    width: 15%;
-    text-align: center;
-}
-textarea {
-    width: 100%;
-    height: 62px;
-
-}
-.mainInfo{
-    background-color: #d3d3d394;
-    height:25px;
-    width: 80%;
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    border: 0px;
-    text-align: center;
-}
-.mainInfo:enabled {
-    background-color: orange;
-}
-
-.mainNumber{
-    background-color: #d6d6d6;
-    width: 25px;
-    height: 25px;
-
-    display:flex;
-    align-items: center;
-    justify-content: center;
-
-}
-.edit-btn, .remove-btn, .save-btn {
     width: 90%;
-    height: 35px;
-    border-radius: 15px;
-    border: none;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-.edit-btn {
-    background-color: orange;
-}
-.remove-btn {
-    background-color: red;
-}
-.save-btn {
-    background-color: #5315f6;
+    max-width: 1200px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.party-select {
-    background-color: #d3d3d394;
-    height: 25px;
-    width: 100%;
-    border: 0;
+/* Header cells */
+th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9rem;
     text-align: left;
-    font-family: "Atkinson Hyperlegible", sans-serif;
-    font-size: 14px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    padding: 0 30px 0 10px;
+    padding: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Table cells */
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+
+/* ID number styling */
+.mainNumber {
+    background-color: #f8f9fa;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #e9ecef;
+}
+
+/* Input fields */
+.mainInfo {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    height: 40px;
+    padding: 0.5rem 1rem;
+    width: 90%;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.mainInfo:disabled {
+    background-color: #f8f9fa;
+    color: #495057;
+    cursor: not-allowed;
+}
+
+.mainInfo:enabled {
+    background-color: white;
+    border-color: #ff9800;
+}
+
+/* Party select styling */
+.party-select {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    height: 40px;
+    width: 90%;
+    padding: 0 1rem;
+    font-size: 0.9rem;
     cursor: pointer;
+    appearance: none;
 }
 
 .party-select:focus {
     outline: none;
-    background-color: orange;
+    border-color: #ff9800;
+    background-color: white;
 }
 
-.party-select:hover {
-    background-color: orange;
-}
-
-/* Aangepaste dropdown pijl */
-.party-select-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 80%;
-}
-
-.party-select-wrapper::after {
-    content: '\25BC';
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #333;
-    font-size: 12px;
-}
-
-.party-select-wrapper:hover::after {
+/* Button styles */
+.edit-btn, .remove-btn, .save-btn, .add-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: white;
 }
 
-/* Verberg standaard pijl in IE */
-.party-select::-ms-expand {
-    display: none;
+.edit-btn {
+    background-color: #ff9800;
 }
 
-.party-select option {
-    font-weight: normal;
+.edit-btn:hover {
+    background-color: #f57c00;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+}
+
+.save-btn:hover {
+    background-color: #388E3C;
+}
+
+.remove-btn {
+    background-color: #f44336;
+}
+
+.remove-btn:hover {
+    background-color: #d32f2f;
+}
+
+.add-btn {
+    background-color: #4CAF50;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+.add-btn:hover {
+    background-color: #388E3C;
+}
+
+/* Pagination styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #495057;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+.pagination button.active {
+    background-color: #0A2750;
+    color: white;
+    border-color: #0A2750;
+}
+
+.pagination button:disabled {
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* Info text styling */
+.pagination-info {
+    text-align: center;
+    color: #6c757d;
+    margin: 1rem auto;
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    table {
+        width: 95%;
+        margin: 1rem auto;
+    }
+
+    th, td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .mainInfo, .party-select {
+        width: 100%;
+    }
+
+    .edit-btn, .remove-btn, .save-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+.text-area-col.image-cell .party-image {
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 15px auto;
     display: block;
-    white-space: nowrap;
-    min-height: 1.2em;
-    padding: 0 2px 1px;
-    background-color: orange;
-    color: white;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.party-select option:checked {
-    background-color: #ff8c00;
-    color: white;
-}
-
-.party-select option:hover {
-    background-color: #ffa500;
+/* Also handle the case when images aren't loading */
+.image-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    margin: 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px solid #ccc;
 }

@@ -1,159 +1,269 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Politiek Grid met Afbeeldingen en Randen</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Politiek Grid Resultaat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        #grid {
-            width: 600px;
-            height: 600px;
-            background-color: white;
-            border: 1px solid #ccc;
-            position: relative;
-        }
-        .party-image {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid black;
-            object-fit: cover;
-            position: absolute;
-            transform: translate(-50%, -50%);
-        }
-        .user {
-            width: 20px;
-            height: 20px;
-            background-color: #2196F3;
-            border: 2px solid #1976D2;
-            border-radius: 50%;
-            position: absolute;
-            transform: translate(-50%, -50%);
-        }
-        .axis-label {
-            font-size: 12px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="./styles/result.css"/>
 </head>
 <body>
-    <div id="grid"></div>
+<div class="container">
+    <header class="header">
+        <h1>Uw Politieke Positie</h1>
+    </header>
+    <div class="results-container">
+        <div id="grid"></div>
+        <div class="results-info">
+            <h2>Partijovereenkomst</h2>
+            <div id="party-matches"></div>
+        </div>
+    </div>
+    <button class="retry-button" onclick="window.location.href='http://stemwijzer.local/index.php'">Probeer opnieuw</button>
+</div>
 
-    <script>
-        const width = 600;
-        const height = 600;
-        const margin = { top: 30, right: 30, bottom: 30, left: 30 };
+<script>
+    const apiURL = "http://stemwijzer-api.local";
 
-        const svg = d3.select("#grid")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+    // Setup grid
+    const width = 380;
+    const height = 380;
+    const margin = {top: 30, right: 30, bottom: 30, left: 30};
 
-        const xScale = d3.scaleLinear()
-            .domain([-20, 20])
-            .range([margin.left, width - margin.right]);
+    const svg = d3
+        .select("#grid")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-        const yScale = d3.scaleLinear()
-            .domain([-20, 20])
-            .range([height - margin.bottom, margin.top]);
+    // Add grid background
+    svg
+        .append("rect")
+        .attr("width", width - margin.left - margin.right)
+        .attr("height", height - margin.top - margin.bottom)
+        .attr("x", margin.left)
+        .attr("y", margin.top)
+        .attr("fill", "white");
 
-        // X-as
-        svg.append("line")
-            .attr("x1", margin.left)
-            .attr("y1", height / 2)
-            .attr("x2", width - margin.right)
-            .attr("y2", height / 2)
-            .attr("stroke", "black");
+    // Create scales
+    const xScale = d3
+        .scaleLinear()
+        .domain([-20, 20])
+        .range([margin.left, width - margin.right]);
 
-        // Y-as
-        svg.append("line")
-            .attr("x1", width / 2)
+    const yScale = d3
+        .scaleLinear()
+        .domain([-20, 20])
+        .range([height - margin.bottom, margin.top]);
+
+    // Add grid lines
+    const gridlines = svg.append("g").attr("class", "grid-lines");
+
+    // Vertical grid lines
+    for (let x = -15; x <= 15; x += 5) {
+        gridlines
+            .append("line")
+            .attr("x1", xScale(x))
             .attr("y1", margin.top)
-            .attr("x2", width / 2)
+            .attr("x2", xScale(x))
             .attr("y2", height - margin.bottom)
-            .attr("stroke", "black");
+            .attr("stroke", "#eee");
+    }
 
-        // As-labels
-        svg.append("text")
-            .attr("class", "axis-label")
-            .attr("x", width - margin.right)
-            .attr("y", height / 2 - 10)
-            .attr("text-anchor", "end")
-            .text("Rechts");
+    // Horizontal grid lines
+    for (let y = -15; y <= 15; y += 5) {
+        gridlines
+            .append("line")
+            .attr("x1", margin.left)
+            .attr("y1", yScale(y))
+            .attr("x2", width - margin.right)
+            .attr("y2", yScale(y))
+            .attr("stroke", "#eee");
+    }
 
-        svg.append("text")
-            .attr("class", "axis-label")
-            .attr("x", margin.left)
-            .attr("y", height / 2 - 10)
-            .text("Links");
+    // Add axes
+    svg
+        .append("line")
+        .attr("class", "axis-line")
+        .attr("x1", margin.left)
+        .attr("y1", height / 2)
+        .attr("x2", width - margin.right)
+        .attr("y2", height / 2);
 
-        svg.append("text")
-            .attr("class", "axis-label")
-            .attr("x", width / 2 + 10)
-            .attr("y", margin.top)
-            .attr("text-anchor", "start")
-            .text("Progressief");
+    svg
+        .append("line")
+        .attr("class", "axis-line")
+        .attr("x1", width / 2)
+        .attr("y1", margin.top)
+        .attr("x2", width / 2)
+        .attr("y2", height - margin.bottom);
 
-        svg.append("text")
-            .attr("class", "axis-label")
-            .attr("x", width / 2 + 10)
-            .attr("y", height - margin.bottom)
-            .attr("text-anchor", "start")
-            .text("Conservatief");
+    // Add labels
+    svg
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", width - margin.right - 10)
+        .attr("y", height / 2 - 10)
+        .text("Rechts");
 
-        function updateGrid(data) {
-            // Verwijder bestaande punten
-            d3.select("#grid").selectAll(".point").remove();
+    svg
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", margin.left + 10)
+        .attr("y", height / 2 - 10)
+        .text("Links");
 
-            // Teken partijen met afbeeldingen
-            const parties = d3.select("#grid").selectAll(".party")
-                .data(data.partijen)
-                .enter()
-                .append("img")
-                .attr("class", "point party-image")
-                .attr("src", d => d.image)
-                .style("left", d => `${xScale(d.xValue)}px`)
-                .style("top", d => `${yScale(d.yValue)}px`)
-                .attr("title", d => d.name);
+    svg
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", width / 2 + 10)
+        .attr("y", margin.top + 20)
+        .text("Progressief");
 
-            // Teken gebruiker
-            d3.select("#grid").selectAll(".user")
-                .data(data.user)
-                .enter()
-                .append("div")
-                .attr("class", "point user")
-                .style("left", d => `${xScale(d.xValue)}px`)
-                .style("top", d => `${yScale(d.yValue)}px`)
-                .attr("title", "Gebruiker");
+    svg
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", width / 2 + 10)
+        .attr("y", height - margin.bottom - 10)
+        .text("Conservatief");
+
+    function updateGrid(data) {
+        // Clear existing points
+        svg.selectAll(".point").remove();
+
+        // Draw parties
+        const parties = svg
+            .selectAll(".party")
+            .data(data.partijen)
+            .enter()
+            .append("g")
+            .attr("class", "point");
+
+        // Add party circles
+        parties
+            .append("circle")
+            .attr("cx", (d) => xScale(d.xValue))
+            .attr("cy", (d) => yScale(d.yValue))
+            .attr("r", 17.5)
+            .attr("fill", "white")
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+        // Add party images as patterns
+        const defs = svg.append("defs");
+
+        parties.each(function (d, i) {
+            const pattern = defs
+                .append("pattern")
+                .attr("id", `party-image-${i}`)
+                .attr("width", 1)
+                .attr("height", 1)
+                .attr("patternUnits", "objectBoundingBox");
+
+            pattern
+                .append("image")
+                .attr("href", d.image)
+                .attr("width", 35)
+                .attr("height", 35)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("preserveAspectRatio", "xMidYMid slice");
+
+            d3.select(this)
+                .append("circle")
+                .attr("cx", xScale(d.xValue))
+                .attr("cy", yScale(d.yValue))
+                .attr("r", 16)
+                .attr("fill", `url(#party-image-${i})`);
+        });
+
+        // Draw user position
+        svg
+            .selectAll(".user")
+            .data([data.userPosition])
+            .enter()
+            .append("circle")
+            .attr("class", "point user")
+            .attr("cx", (d) => xScale(d.xValue))
+            .attr("cy", (d) => yScale(d.yValue))
+            .attr("r", 10);
+
+        // Update party matches
+        updatePartyMatches(data.partyMatches);
+    }
+
+    function updatePartyMatches(partyMatches) {
+        const matchesContainer = document.getElementById("party-matches");
+
+        matchesContainer.innerHTML = partyMatches
+            .map(
+                (party, index) => `
+              <div class="party-match"
+                   onmouseover="highlightParty(${party.xValue}, ${party.yValue})"
+                   onmouseout="removeHighlight()">
+                  <h3>${index + 1}. ${party.name}</h3>
+                  <p>Overeenkomst: <span class="match-percentage">${party.matchPercentage}%</span></p>
+              </div>
+            `
+            )
+            .join("");
+    }
+
+    function highlightParty(x, y) {
+        svg
+            .append("circle")
+            .attr("class", "highlight")
+            .attr("cx", xScale(x))
+            .attr("cy", yScale(y))
+            .attr("r", 20)
+            .attr("fill", "none")
+            .attr("stroke", "#2196F3")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4,4");
+    }
+
+    function removeHighlight() {
+        svg.selectAll(".highlight").remove();
+    }
+
+    async function loadResults() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const answersParam = urlParams.get("answers");
+
+            if (!answersParam) {
+                throw new Error("Geen antwoorden gevonden");
+            }
+
+            // Send answers to server and get calculated results
+            const response = await fetch(`${apiURL}/calculate-results`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: answersParam // Send the raw answers JSON
+            });
+
+            if (!response.ok) {
+                throw new Error("Server error");
+            }
+
+            const data = await response.json();
+            updateGrid(data);
+        } catch (error) {
+            console.error("Error loading results:", error);
+            document.querySelector(".results-container").innerHTML = `
+            <div class="error-message">
+              Er is een fout opgetreden bij het laden van de resultaten.
+              <br>
+              ${error.message}
+            </div>
+          `;
         }
+    }
 
-        // Voorbeeld data
-        const result = {
-            user: [
-                { xValue: 5, yValue: -6 }
-            ],
-            partijen: [
-                { name: "Partij 1", image: "/src/img/a.jpg", xValue: 5, yValue: 5 },
-                { name: "Partij 2", image: "/src/img/a.jpg", xValue: -2, yValue: 8 },
-                { name: "Partij 3", image: "/src/img/a.jpg", xValue: 3, yValue: -5 },
-                { name: "Partij 4", image: "/src/img/a.jpg", xValue: -12, yValue: -7 },
-                { name: "Partij 5", image: "/src/img/a.jpg", xValue: 7, yValue: 13 }
-            ]
-        };
-
-        updateGrid(result);
-        
-        
-    </script>
+    // Load results when page loads
+    document.addEventListener("DOMContentLoaded", loadResults);
+</script>
 </body>
 </html>
